@@ -25,7 +25,7 @@ SO THAT I can plan a trip accordingly
 * WHEN I search for a city
 > - [ ] THEN I am presented with current and future conditions for that city and that city is added to the search history
 * WHEN I view current weather conditions for that city
-> - [ ] THEN I am presented with the city name, the date, an icon representation of weather conditions, the temperature, the humidity, and the wind speed
+> - [ ] THEN I am presented with the city name (CITY.NAME), the date (LIST.DT_TXT....... CONVERT USING DAY.JS), an icon representation of weather conditions, the temperature (LIST.MAIN.TEMP, LIST.MAIN.FEELS_LIKE, LIST.MAIN.TEMP_MIN, LIST.MAIN.TEMP_MAX), the humidity (LIST.MAIN.HUMIDITY), and the wind speed (LIST.WIND.SPEED) ++ CITY.SUNRISE, CITY.SUNSET
 * WHEN I view future weather conditions for that city
 > - [ ] THEN I am presented with a 5-day forecast that displays the date, an icon representation of weather conditions, the temperature, the wind speed, and the humidity
 * WHEN I click on a city in the search history
