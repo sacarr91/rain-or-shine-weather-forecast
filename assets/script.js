@@ -7,7 +7,6 @@ const forecastContainerEl = document.getElementById('forecastCtn');
 const searchButton = document.getElementById('searchBtn');
 const searchedCities = [];
 
-//TODO: Use OpenWeather API
 //additional function to get lat & lon for increased specificity >> improve accuracy of location for displayed weather
 function getLatLon() {
     let cityName, countryCode;
@@ -28,28 +27,29 @@ function getLatLon() {
         })
 }
 
-function getAPI() {
+function newSearch() {
     getLatLon();
     const lat = localStorage.getItem(searchedCities[0].lat);
     const lon = localStorage.getItem(searchedCities[0].lon);
     const requestUrl = (`https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&units=imperial&appid=${apiKey}`)
     fetch(requestUrl)
-        .then(function (response) {
-//format is already returned as JSON... no need to convert
-        })
         .then(function (data) {
             console.log(data);
         })
 }
 
+function revisitPrevQuery() {
+    // how to click on previous search & yeild same results?
+}
+
+
 // display searched cities
+//display city name... add to list in small column?
 searchedCities.forEach(searchedQuery => {
-    //display city name... add to list in small column?
-});
+    const link = document.createElement('a');
+    searchContainerEl.appendChild(link);
+    link.textContent = (`${searchedQuery.city}, ${searchedQuery.country}`);
+    link.href = (`https://api.openweathermap.org/data/2.5/forecast?lat=${searchedQuery.lat}&lon=${searchedQuery.lon}&units=imperial&appid=${apiKey}`)
+})
 
-
-searchButton.addEventListener('click', getAPI)
-
-
-//use localstorage to store persistent data
-
+searchButton.addEventListener('click', newSearch);
