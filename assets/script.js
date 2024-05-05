@@ -9,7 +9,8 @@ const searchedCities = [];
 
 //additional function to get lat & lon for increased specificity >> improve accuracy of location for displayed weather
 function getLatLon() {
-    let cityName, countryCode;
+    let cityName = getElementById('HOLDUPWAITAMINITLETMEPUTSOMEPIMPININNIT');
+    // let countryCode = >>>>>>>GET FROM GEOCODE API<<<<<<
     const geocodeURL = (`http://api.openweathermap.org/geo/1.0/direct?q=${cityName},${countryCode}&limit=1&units=imperial&appid=${apiKey}`);
     if (localStorage.length === 0) localStorage.setItem(searchedCities);
     fetch(geocodeURL)
@@ -53,3 +54,18 @@ searchedCities.forEach(searchedQuery => {
 })
 
 searchButton.addEventListener('click', newSearch);
+
+
+
+//////////////////////////////
+function addressAutocomplete(cityName, callback, options) {
+    let cityName = document.getElementById('userInput');
+    addressAutocomplete(cityName, (showData) => {
+        console.log("Selected option: ");////////////////////////////LEFT OFF HERE....
+        //////////////How to pull data from selected city?
+        //////////////what is the callback here?
+        //////////////looking at Step 2 of Geoapify tutorial: https://www.geoapify.com/tutorial/address-input-for-address-validation-and-address-verification-forms-tutorial
+        console.log(showData);
+    }, {
+        placeholder: "Enter an address here"
+    });
