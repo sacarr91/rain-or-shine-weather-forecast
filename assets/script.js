@@ -7,7 +7,8 @@ const forecastContainerEl = document.getElementById('forecastCtn');
 const searchButton = document.getElementById('searchBtn');
 const searchedCities = [];
 
-//thinking through geocoding...
+//TODO: Use OpenWeather API
+//additional function to get lat & lon for increased specificity >> improve accuracy of location for displayed weather
 function getLatLon() {
     let cityName, countryCode;
     const geocodeURL = (`http://api.openweathermap.org/geo/1.0/direct?q=${cityName},${countryCode}&limit=1&appid=${apiKey}`);
@@ -27,19 +28,25 @@ function getLatLon() {
         })
 }
 
-//Use OpenWeather API
 function getAPI() {
-    let lat, lon;
     getLatLon();
+    const lat = localStorage.getItem(searchedCities[0].lat);
+    const lon = localStorage.getItem(searchedCities[0].lon);
     const requestUrl = (`https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=${apiKey}`)
     fetch(requestUrl)
         .then(function (response) {
-            return response.json();
+
         })
         .then(function (data) {
             console.log(data);
         })
 }
+
+// display searched cities
+searchedCities.forEach(searchedQuery => {
+    //display city name... add to list in small column?
+});
+
 
 searchButton.addEventListener('click', getAPI)
 
