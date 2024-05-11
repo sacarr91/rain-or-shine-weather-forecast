@@ -1,5 +1,5 @@
 //API Key storage
-require("./secrets")
+const keys = require("./secrets")
 
 //grab HTML elements
 const searchContainerEl = document.getElementById('searchCtn');
@@ -33,10 +33,11 @@ function getLatLon() {
         })
 }
 
-function newSearch() {
+function newSearch () {
     getLatLon();
     const currentSearch = localStorage.getItem(searchedCities[0]);
     let lat, lon, city, state = (currentSearch.lat, currentSearch.lon, currentSearch.city, currentSearch.state);
+    console.log(`lat: ${lat}, lon: ${lon}, city: ${city}, state: ${state}`)
     const requestUrl = (`https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&units=imperial&appid=${apiKey}`);
     //display searched cities
     addToSearched = () => {
@@ -58,7 +59,7 @@ function revisitPrevQuery() {
 }
 
 
-searchButton.addEventListener('click', newSearch);
+searchButton.addEventListener("click", newSearch);
 
 
 

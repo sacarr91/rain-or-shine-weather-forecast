@@ -1,0 +1,15 @@
+{
+  "name": "rain-or-shine-weather-forecast",
+  "version": "1.0.0",
+  "description": "Want to know if it's a good day to take the boat out? Go golfing? Head to the park? Stay inside?",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "rain-or-shine-weather-forecast"
+  },
+  "author": "Stephanie Carr",
+  "license": "ISC"
+}
