@@ -17,25 +17,36 @@ function getLatLon() {
     const geocodeURL = (`http://api.openweathermap.org/geo/1.0/direct?q=${cityName},${countryCode}&limit=5&units=imperial&appid=${apiKey}`);
     if (localStorage.length === 0) localStorage.setItem(searchedCities);
     fetch(geocodeURL)
-        .then(function (geocodeInfo) {
-            console.log(`Geocode Info from fetch..... ${geocodeInfo}`);
+        .then(function (locationInfo) {
+            console.log(`Location Info from fetch..... ${locationInfo}`);
             //store info to local storage
             const userQuery = {
                 city: cityName,
+                state: locationInfo.state,
                 country: countryCode,
-                lat: geocodeInfo.lat,
-                lon: geocodeInfo.lon
+                lat: locationInfo.lat,
+                lon: locationInfo.lon
             };
             searchedCities.unshift(userQuery);
-            console.log(`Data pushed to array..... ${userQuery}`)
+            console.log(`Data pushed to array..... ${userQuery}`);
+            console.log(`Updated Searched Cities array: ${searchedCities}`)
         })
 }
 
 function newSearch() {
     getLatLon();
-    const lat = localStorage.getItem(searchedCities[0].lat);
-    const lon = localStorage.getItem(searchedCities[0].lon);
-    const requestUrl = (`https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&units=imperial&appid=${apiKey}`)
+    const currentSearch = localStorage.getItem(searchedCities[0]);
+    let lat, lon, city, state = (currentSearch.lat, currentSearch.lon, currentSearch.city, currentSearch.state);
+    const requestUrl = (`https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&units=imperial&appid=${apiKey}`);
+    //display searched cities
+    addToSearched = () => {
+        const link = document.createElement('a');
+        searchContainerEl.prependChild(link);
+        link.textContent = (`${city}, ${state}`);
+        link.href = ("/"); 
+        // DISP WEATHER // `https://api.openweathermap.org/data/2.5/forecast?lat=${searchedQuery.lat}&lon=${searchedQuery.lon}&units=imperial&appid=${apiKey}`)
+    }
+
     fetch(requestUrl)
         .then(function (data) {
             console.log(`${data} is ready to use`);
@@ -46,15 +57,6 @@ function revisitPrevQuery() {
     // how to click on previous search & yeild same results?
 }
 
-
-// display preeviously searched cities
-//display city name... add to list in small column?
-searchedCities.forEach(searchedQuery => {
-    const link = document.createElement('a');
-    searchContainerEl.appendChild(link);
-    link.textContent = (searchedQuery.city);
-    link.href = (//FUNCTION TO DISPLAY WEATHER// `https://api.openweathermap.org/data/2.5/forecast?lat=${searchedQuery.lat}&lon=${searchedQuery.lon}&units=imperial&appid=${apiKey}`)
-})
 
 searchButton.addEventListener('click', newSearch);
 
