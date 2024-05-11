@@ -1,5 +1,6 @@
 //API Key storage
-const keys = require("./secrets")
+// const keys = require("./secrets")
+const apiKey = "22a572ddc4e089d2bb5e1db833219c1b";
 
 //grab HTML elements
 const searchContainerEl = document.getElementById('searchCtn');
@@ -11,11 +12,13 @@ const searchedCities = [];
 
 //additional function to get lat & lon for increased specificity >> improve accuracy of location for displayed weather
 function getLatLon() {
-    let cityName = getElementById('userInput').value;
+    let cityName = document.getElementById('userInput').value;
     let countryCode = "US";
     // let countryCode = >>>>>>>GET FROM GEOCODE API<<<<<<
     const geocodeURL = (`http://api.openweathermap.org/geo/1.0/direct?q=${cityName},${countryCode}&limit=5&units=imperial&appid=${apiKey}`);
-    if (localStorage.length === 0) localStorage.setItem(searchedCities);
+    if (localStorage.length === 0) {
+        localStorage.setItem("searchedCities", searchedCities);
+    } else { localStorage.getItem(JSON.parse(searchedCities)) };
     fetch(geocodeURL)
         .then(function (locationInfo) {
             console.log(`Location Info from fetch..... ${locationInfo}`);
@@ -30,10 +33,11 @@ function getLatLon() {
             searchedCities.unshift(userQuery);
             console.log(`Data pushed to array..... ${userQuery}`);
             console.log(`Updated Searched Cities array: ${searchedCities}`)
+            localStorage.setItem(JSON.stringify(searchedCities));
         })
 }
 
-function newSearch () {
+function newSearch() {
     getLatLon();
     const currentSearch = localStorage.getItem(searchedCities[0]);
     let lat, lon, city, state = (currentSearch.lat, currentSearch.lon, currentSearch.city, currentSearch.state);
@@ -44,7 +48,7 @@ function newSearch () {
         const link = document.createElement('a');
         searchContainerEl.prependChild(link);
         link.textContent = (`${city}, ${state}`);
-        link.href = ("/"); 
+        link.href = ("/");
         // DISP WEATHER // `https://api.openweathermap.org/data/2.5/forecast?lat=${searchedQuery.lat}&lon=${searchedQuery.lon}&units=imperial&appid=${apiKey}`)
     }
 
