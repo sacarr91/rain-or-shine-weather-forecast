@@ -14,7 +14,7 @@ This application is still under development.
 - [x] A blank page! How cool!
 
 #### Added functionality
-- 
+- Integrated Bing Maps API for flexible search capability, not reliant on spelling accuracy
 - 
 
 ![screenshot of deployed page]()

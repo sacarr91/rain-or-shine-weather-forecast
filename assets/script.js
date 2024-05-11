@@ -5,6 +5,8 @@ require("./secrets")
 const searchContainerEl = document.getElementById('searchCtn');
 const forecastContainerEl = document.getElementById('forecastCtn');
 const searchButton = document.getElementById('searchBtn');
+
+//initiate empty array for searched cities
 const searchedCities = [];
 
 //additional function to get lat & lon for increased specificity >> improve accuracy of location for displayed weather
@@ -58,14 +60,17 @@ searchButton.addEventListener('click', newSearch);
 
 
 //////////////////////////////
-function addressAutocomplete(cityName, callback, options) {
-    let cityName = document.getElementById('userInput');
-    addressAutocomplete(cityName, (showData) => {
-        console.log("Selected option: ");////////////////////////////LEFT OFF HERE....
-        //////////////How to pull data from selected city?
-        //////////////what is the callback here?
-        //////////////looking at Step 2 of Geoapify tutorial: https://www.geoapify.com/tutorial/address-input-for-address-validation-and-address-verification-forms-tutorial
-        console.log(showData);
-    }, {
-        placeholder: "Enter an address here"
-    });
+function addressAutocomplete(cityName, data) {
+    cityName = document.getElementById('userInput');
+    console.log(`Selected option: ${cityName}`);
+    console.log(data);
+};
+addressAutocomplete(cityName, (data) => {
+    console.log("Selected option: ");////////////////////////////LEFT OFF HERE....
+    //////////////How to pull data from selected city?
+    //////////////what is the callback here?
+    //////////////looking at Step 2 of Geoapify tutorial: https://www.geoapify.com/tutorial/address-input-for-address-validation-and-address-verification-forms-tutorial
+    console.log(data);
+}, {
+    placeholder: "Enter an address here"
+});
