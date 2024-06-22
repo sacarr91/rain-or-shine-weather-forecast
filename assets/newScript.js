@@ -269,27 +269,60 @@ function createCountryDropdown() {
 const searchContainerEl = document.getElementById('searchCtn');
 const forecastContainerEl = document.getElementById('forecastCtn');
 const searchButton = document.getElementById('searchBtn');
-let searchedCities = [];
+const searchCity = document.getElementById('cityInput');
+const searchState = document.getElementById('stateInput');
+const searchCountry = document.getElementById('countryDropdown');
+
+localStorage.getItem("searchedCities") = null
+    ? searchedCities = []
+    : searchedCities = JSON.parse(localStorage.getItem("searchedCities"));
 
 // function to get lat & lon for increased specificity >> improve accuracy of location for displayed weather
 function initSearch() {
+    let cityQuery = searchCity.value;
+    let stateQuery = searchState.value;
+    let countryQuery = searchCountry.value;
+    const geocodeURL = (`http://api.openweathermap.org/geo/1.0/direct?q=${cityQuery},${stateQuery},${countryQuery}&limit=1&appid=${apiKey}`);
 
-};
+    fetch(geocodeURL)
+        .then(function getJsonData(response) {
+            return response.json();
+        })
+        .then(function storeQuery(data) {
+            //store info to local storage
+            const searchQuery = {
+                city: data.city,
+                state: data.state,
+                country: countryCode,
+                lat: data.lat,
+                lon: data.lon
+            };
+            searchedCities.unshift(searchQuery);
+            searchedCities = JSON.stringify(searchedCities);
+            localStorage.setItem("searchedCities", searchedCities);
+        });
+    };
 
-// display results
-let searchResult = JSON.parse(data);
-
-
-//store didYouMean
+    // display results
+    let searchResult = JSON.parse(data);
 
 
 
-const displayWeather = () => {
+    const displayWeather = () => {
+        // <div class="card">
+        //     <img src="..." class="card-img-top" alt="...">
+        //         <div class="card-body">
+        //             <h5 class="card-title">Card title</h5>
+        //             <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional content. This card has even longer content than the first to show that equal height action.</p>
+        //         </div>
+        //         <div class="card-footer">
+        //             <small class="text-body-secondary">Last updated 3 mins ago</small>
+        //         </div>
+        // </div>
+    };
 
-};
 
 
-
-$(document).ready(function () {
-    createCountryDropdown();
-});
+    $(document).ready(function () {
+        createCountryDropdown();
+    });
