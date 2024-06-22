@@ -1,66 +1,97 @@
 //API Key storage
-// const keys = require("./secrets")
+
 const apiKey = "22a572ddc4e089d2bb5e1db833219c1b";
 
 //grab HTML elements
 const searchContainerEl = document.getElementById('searchCtn');
 const forecastContainerEl = document.getElementById('forecastCtn');
 const searchButton = document.getElementById('searchBtn');
-
-//initiate empty array for searched cities
-const searchedCities = [];
+let searchedCities = [];
 
 //additional function to get lat & lon for increased specificity >> improve accuracy of location for displayed weather
-function getLatLon() {
+function initSearch() {
+    // if (localStorage.length !== 0) {
+    let prevSearch = localStorage.getItem("searchedCities") || JSON.stringify({
+            city: "this",
+            state: "is",
+            country: "a",
+            lat: "test",
+            lon: "item"
+        })
+    };
+    if (prevSearch <= 1) { searchedCities = JSON.parse(prevSearch); }
+    // } else {
+    //     localStorage.setItem("searchedCities", []);
+    // };
+
     let cityName = document.getElementById('userInput').value;
     let countryCode = "US";
     // let countryCode = >>>>>>>GET FROM GEOCODE API<<<<<<
-    const geocodeURL = (`http://api.openweathermap.org/geo/1.0/direct?q=${cityName},${countryCode}&limit=5&units=imperial&appid=${apiKey}`);
-    if (localStorage.length === 0) {
-        localStorage.setItem("searchedCities", searchedCities);
-    } else { localStorage.getItem(JSON.parse(searchedCities)) };
+    const geocodeURL = (`http://api.openweathermap.org/geo/1.0/direct?q=${city},${state},${country}&limit=1&appid=${apiKey}`);
+
     fetch(geocodeURL)
-        .then(function (locationInfo) {
-            console.log(`Location Info from fetch..... ${locationInfo}`);
+        .then(function (response) {
+            return response.json();
+        })
+        .then(function (data) {
+            countryCode = data.country;
             //store info to local storage
             const userQuery = {
-                city: cityName,
-                state: locationInfo.state,
+                city: data.city,
+                state: data.state,
                 country: countryCode,
-                lat: locationInfo.lat,
-                lon: locationInfo.lon
+                lat: data.lat,
+                lon: data.lon
             };
             searchedCities.unshift(userQuery);
-            console.log(`Data pushed to array..... ${userQuery}`);
-            console.log(`Updated Searched Cities array: ${searchedCities}`)
-            localStorage.setItem(JSON.stringify(searchedCities));
+
+            searchedCities = JSON.stringify(searchedCities);
+
+            localStorage.setItem("searchedCities", searchedCities);
+
+
         })
-}
+// };
 
-function newSearch() {
-    getLatLon();
-    const currentSearch = localStorage.getItem(searchedCities[0]);
-    let lat, lon, city, state = (currentSearch.lat, currentSearch.lon, currentSearch.city, currentSearch.state);
-    console.log(`lat: ${lat}, lon: ${lon}, city: ${city}, state: ${state}`)
+function sendIt(lat, lon) {
+    let prevSearch = localStorage.getItem("searchedCities") || [];
+    if (prevSearch !== 0) { searchedCities = JSON.parse(prevSearch); }
+    const currentSearch = searchedCities[0];
+    lat = currentSearch.lat;
+    lon = currentSearch.lon;
     const requestUrl = (`https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&units=imperial&appid=${apiKey}`);
-    //display searched cities
-    addToSearched = () => {
-        const link = document.createElement('a');
-        searchContainerEl.prependChild(link);
-        link.textContent = (`${city}, ${state}`);
-        link.href = ("/");
-        // DISP WEATHER // `https://api.openweathermap.org/data/2.5/forecast?lat=${searchedQuery.lat}&lon=${searchedQuery.lon}&units=imperial&appid=${apiKey}`)
-    }
-
     fetch(requestUrl)
-        .then(function (data) {
-            console.log(`${data} is ready to use`);
-        });
+        .then(function (weather) {
+            return weather.json();
+        })
+        .then(function (data2) {
+            console.log(data2);
+        })
 };
 
-function revisitPrevQuery() {
-    // how to click on previous search & yeild same results?
-}
+//display searched cities
+function addToSearched(city, state) {
+    let prevSearch = localStorage.getItem("searchedCities") || [];
+    if (prevSearch !== 0) { searchedCities = JSON.parse(prevSearch); }
+    const currentSearch = searchedCities[0];
+    city = currentSearch.city;
+    state = currentSearch.state;
+    const link = document.createElement('a');
+    searchContainerEl.prepend(link);
+    link.textContent = (`${city}, ${state}`);
+    link.href = ("/");
+    // DISP WEATHER // `https://api.openweathermap.org/data/2.5/forecast?lat=${searchedQuery.lat}&lon=${searchedQuery.lon}&units=imperial&appid=${apiKey}`)
+};
+
+const newSearch = () => {
+    initSearch();
+    sendIt();                   
+    addToSearched();
+};
+
+// function revisitPrevQuery() {
+// how to click on previous search & yeild same results?
+// }
 
 
 searchButton.addEventListener("click", newSearch);
