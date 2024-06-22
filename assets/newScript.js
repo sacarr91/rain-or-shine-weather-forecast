@@ -7,9 +7,7 @@
 // display (card?) city name, date, icon, temp, wind speed, humidity
 
 //API Key storage
-
 const apiKey = "22a572ddc4e089d2bb5e1db833219c1b";
-
 const countryCodesArr = [
     { name: "United States", code: "US" },
     { name: "Afghanistan", code: "AF" },
@@ -255,7 +253,17 @@ const countryCodesArr = [
     { name: "Yemen", code: "YE" },
     { name: "Zambia", code: "ZM" },
     { name: "Zimbabwe", code: "ZW" }
-]
+];
+
+function createCountryDropdown() {
+    const countryDropdown = document.getElementById("countryDropdown");
+    for (let i = 0; i < countryCodesArr.length; i++) {
+        const thisCountry = countryCodesArr[i].name;
+        const thisCode = countryCodesArr[i].code;
+        let countryName = `<option value="${thisCode}">${thisCountry}</option>`;
+        countryDropdown.innerHTML += countryName;
+    };
+};
 
 //grab HTML elements
 const searchContainerEl = document.getElementById('searchCtn');
@@ -280,16 +288,8 @@ const displayWeather = () => {
 
 };
 
-function createCountryDropdown() {
-    const countryDropdown = document.getElementById("countryDropdown");
-    for (let i = 0; i < countryCodesArr.length; i++) {
-        const thisCountry = countryCodesArr[i].name;
-        const thisCode = countryCodesArr[i].code;
-        let countryName = `<option value="${thisCode}">${thisCountry}</option>`;
-        countryDropdown.innerHTML += countryName;
-    };
-};
+
 
 $(document).ready(function () {
-   createCountryDropdown();
+    createCountryDropdown();
 });
