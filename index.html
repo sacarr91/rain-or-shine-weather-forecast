@@ -34,18 +34,29 @@
       <button id="searchBtn" class="btn btn-outline-dark">Search</button>
     </div>
     <div id="forecastCtn" class="container-fluid col-sm-8 col-md-9">
-      <h2>City Name, State, Country</h2>
-<!-- TODAY'S WEATHER -->
+      <h2>${City.Name}, State, Country</h2>
+      <!-- TODAY'S WEATHER -->
       <h3 class="mt-3">Today's Weather</h3>
       <div class="card text-bg-dark">
         <img src="./assets/images/cover/cloudy.png" class="card-img" alt="...">
         <div class="card-img-overlay col-8">
           <h4 class="card-title">Temperature</h4>
-          <p class="card-text">Wind Speed</br>Humidity</p>
+          <p class="card-text">list.dt_txt
+            </br> main.temp
+            </br> wind.speed
+            </br>  main.humidity
+            </br> *main.feels_like*
+            </br> *weather.icon*
+            </br> *weather.main*
+            </br> *weather.description*
+            </br> *main.temp_min*
+            </br> *main.temp_max*
+            </br> *sys.sunrise*
+            </br> *sys.sunset*</p>
           <p class="card-text"><small>day.js</small></p>
         </div>
       </div>
-<!-- 5 DAY FORECAST -->
+      <!-- 5 DAY FORECAST -->
       <h3 class="mt-3">5-Day Forecast</h3>
       <div class="card-group text-center">
         <div class="card justify-content-center">
@@ -65,8 +76,19 @@
           <div class="card-body">
             <h5 class="card-title">85 / 64</h5>
             <img src="./assets/images/icon/sun.png" class="card-img-top p-1" alt="...">
-            <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional
-              content. This content is a little bit longer.</p>
+            <p class="card-text">Wind Speed: </br>Humidity</br> city.name
+               list.dt_txt .... CONVERT USING DAY.JS
+               list.main.temp
+              *list.main.feels_like*
+              *list.weather.icon*
+              *list.weather.main*
+              *list.weather.description*
+              *list.main.temp_min*
+              *list.main.temp_max*
+               list.main.humidity
+               list.wind.speed
+              *city.sunrise*
+              *city.sunset*</p>
           </div>
           <div class="card-footer">
             <small class="text-body-secondary">Last updated 3 mins ago</small>
