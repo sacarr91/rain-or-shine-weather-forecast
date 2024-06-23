@@ -1,10 +1,11 @@
-//form inputs
+// TO DO
+// [ ] form inputs
 
-// pull & display present & future (5-day) conditions for city
+// [ ] pull & display present & future (5-day) conditions for city
 
-// add city to search history
+// [ ] add city to search history
 
-// display (card?) city name, date, icon, temp, wind speed, humidity
+// [ ] display (card?) city name, date, icon, temp, wind speed, humidity
 
 //API Key storage
 const apiKey = "22a572ddc4e089d2bb5e1db833219c1b";
