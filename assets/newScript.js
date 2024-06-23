@@ -286,15 +286,16 @@ function initSearch() {
     const geocodeURL = (`http://api.openweathermap.org/geo/1.0/direct?q=${cityQuery},${stateQuery},${countryQuery}&limit=1&appid=${apiKey}`);
 
     fetch(geocodeURL)
-        .then(function getJsonData(response) {
-            return response.json();
+        .then(function () {
+            let data = JSON.parse(response);
+            return data;
         })
-        .then(function storeQuery(data) {
+        .then(function (data) {
             //store info to local storage
             const searchQuery = {
                 city: data.city,
                 state: data.state,
-                country: countryCode,
+                country: data.country,
                 lat: data.lat,
                 lon: data.lon
             };
