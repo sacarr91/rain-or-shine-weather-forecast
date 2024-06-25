@@ -324,14 +324,13 @@ const listPreviousQueries = () => {
     pqList.innerHTML = ""
     
     for (let i = 0; i < prevQueryArr.length; i++) {
-        
         const pq = prevQueryArr[i];
         const queryUL =
-            `<a href="#" class="list-group-item list-group-item-action" id="${[i]}">
+            `<a href="#" class="list-group-item list-group-item-action" id="${i}">
             ${pq.city}, ${pq.state}, ${pq.country}
             </a>`
         pqList.innerHTML += queryUL;
-        document.getElementById(`pq${[i]}`).addEventListener("click", recallPrevQuery);
+        document.getElementById(`${i}`).addEventListener("click", recallPrevQuery);
     }
 };
 
