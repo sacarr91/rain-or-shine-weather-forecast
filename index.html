@@ -22,16 +22,26 @@
             <input type="text" class="form-control" id="cityInput" placeholder="City">
           </div>
           <div class="col-5">
-            <input type="text" class="form-control" id="stateInput" maxlength="2" placeholder="State">
+            <input type="text" class="form-control" id="stateInput" maxlength="2" placeholder="State (opt.)">
           </div>
           <div class="col-7">
             <select class="form-select" aria-label="country" id="countryDropdown">
+              <option selected disabled>Select Country</option>
               <!-- inject HTML -->
             </select>
           </div>
         </div>
       </form>
-      <button id="searchBtn" class="btn btn-outline-dark">Search</button>
+      <div class="justify-content-right">
+        <button id="searchBtn" class="btn btn-outline-dark mb-3">Search</button>
+      </div>
+      <div class="list-group" id="previousQueryList">
+        <a href="#" class="list-group-item list-group-item-action">Current Query</a>
+        <a href="#" class="list-group-item list-group-item-action">Query 4</a>
+        <a href="#" class="list-group-item list-group-item-action">Query 3</a>
+        <a href="#" class="list-group-item list-group-item-action">Query 2</a>
+        <a href="#" class="list-group-item list-group-item-action">Query 1</a>
+      </div>
     </div>
     <div id="forecastCtn" class="container-fluid col-sm-8 col-md-9">
       <h2>${City.Name}, State, Country</h2>
@@ -44,7 +54,7 @@
           <p class="card-text">list.dt_txt
             </br> main.temp
             </br> wind.speed
-            </br>  main.humidity
+            </br> main.humidity
             </br> *main.feels_like*
             </br> *weather.icon*
             </br> *weather.main*
@@ -77,16 +87,16 @@
             <h5 class="card-title">85 / 64</h5>
             <img src="./assets/images/icon/sun.png" class="card-img-top p-1" alt="...">
             <p class="card-text">Wind Speed: </br>Humidity</br> city.name
-               list.dt_txt .... CONVERT USING DAY.JS
-               list.main.temp
+              list.dt_txt .... CONVERT USING DAY.JS
+              list.main.temp
               *list.main.feels_like*
               *list.weather.icon*
               *list.weather.main*
               *list.weather.description*
               *list.main.temp_min*
               *list.main.temp_max*
-               list.main.humidity
-               list.wind.speed
+              list.main.humidity
+              list.wind.speed
               *city.sunrise*
               *city.sunset*</p>
           </div>

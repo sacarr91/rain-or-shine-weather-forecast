@@ -1,6 +1,8 @@
 // TO DO
 // [ ] form inputs
 
+const { Socket } = require("git-filter-repo");
+
 // [ ] pull & display present & future (5-day) conditions for city
 
 // [ ] add city to search history
@@ -283,48 +285,75 @@ function initSearch() {
     let cityQuery = searchCity.value;
     let stateQuery = searchState.value;
     let countryQuery = searchCountry.value;
-    const geocodeURL = (`http://api.openweathermap.org/geo/1.0/direct?q=${cityQuery},${stateQuery},${countryQuery}&limit=1&appid=${apiKey}`);
+    const cscURL = (`http://api.openweathermap.org/geo/1.0/direct?q=${cityQuery},${stateQuery},${countryQuery}&limit=1&appid=${apiKey}`);
 
-    fetch(geocodeURL)
-        .then(function () {
-            let data = JSON.parse(response);
-            return data;
-        })
-        .then(function (data) {
-            //store info to local storage
-            const searchQuery = {
-                city: data.city,
-                state: data.state,
-                country: data.country,
-                lat: data.lat,
-                lon: data.lon
-            };
-            searchedCities.unshift(searchQuery);
-            searchedCities = JSON.stringify(searchedCities);
-            localStorage.setItem("searchedCities", searchedCities);
-        });
+    function parseData() {
+        let data = JSON.parse(response);
+        return data;
     };
 
-    // display results
-    let searchResult = JSON.parse(data);
-
-
-
-    const displayWeather = () => {
-        // <div class="card">
-        //     <img src="..." class="card-img-top" alt="...">
-        //         <div class="card-body">
-        //             <h5 class="card-title">Card title</h5>
-        //             <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional content. This card has even longer content than the first to show that equal height action.</p>
-        //         </div>
-        //         <div class="card-footer">
-        //             <small class="text-body-secondary">Last updated 3 mins ago</small>
-        //         </div>
-        // </div>
+    function storeData(data) {
+        // store data as variables
+        const searchQuery = {
+            city: data.name,
+            state: stateQuery,
+            country: data.country,
+            lat: data.lat,
+            lon: data.lon
+        };
+        //put this object at the start of the searched cities array in LS
+        searchedCities.unshift(searchQuery);
+        searchedCities = JSON.stringify(searchedCities);
+        localStorage.setItem("searchedCities", searchedCities);
     };
 
+    function getWeather(searchQuery) {
+        let latLonURL = `api.openweathermap.org/data/2.5/forecast?lat=${searchQuery.lat}&lon=${searchQuery.lon}&appid=${apiKey}`
+        fetch(latLonURL)
+    };
+
+    fetch(cscURL)
+        .then(parseData)
+        .then(storeData)
+        .then(getWeather)
+        //display current weather
+        //display 5-day forecast
+
+// render searched city list
+const listPreviousQueries = () => {
+    let prevQueryArr = localStorage.getItem("searchedCities");
+    prevQueryArr = JSON.parse(prevQueryArr);
+
+    for (let i = 0; i < prevQueryArr.length; i++) {
+        const pqList = document.getElementById("previousQueryList");
+        const pq = prevQueryArr[i];
+        const queryUL =
+            `<a href="#" class="list-group-item list-group-item-action" id="pq${[i]}">
+       ${pq.name}, ${pq.state}, ${pq.country}
+       </a>`
+        pqList.innerHTML += queryUL;
+    }
+}
+// display results
+let showResult = JSON.parse(data);
+// call weather API using lat/lon
 
 
-    $(document).ready(function () {
-        createCountryDropdown();
-    });
+const displayWeather = () => {
+    // <div class="card">
+    //     <img src="..." class="card-img-top" alt="...">
+    //         <div class="card-body">
+    //             <h5 class="card-title">Card title</h5>
+    //             <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional content. This card has even longer content than the first to show that equal height action.</p>
+    //         </div>
+    //         <div class="card-footer">
+    //             <small class="text-body-secondary">Last updated 3 mins ago</small>
+    //         </div>
+    // </div>
+};
+
+
+
+$(document).ready(function () {
+    createCountryDropdown();
+});
