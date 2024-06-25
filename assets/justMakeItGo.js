@@ -305,11 +305,11 @@ function initSearch() {
             searchedCities = JSON.stringify(searchedCities);
             localStorage.setItem("searchedCities", searchedCities);
         })
-        // .then(getWeather1stX)
+        .then(displayWeather("0"));
     //display current weather
 
     //display 5-day forecast
-listPreviousQueries();
+    listPreviousQueries();
 }
 
 //FUNCTIONS
@@ -319,10 +319,9 @@ const listPreviousQueries = () => {
     localStorage.getItem("searchedCities")
         ? prevQueryArr = JSON.parse(localStorage.getItem("searchedCities"))
         : prevQueryArr = [];
-    console.log(`prevQueryArr = ${prevQueryArr}`);
     const pqList = document.getElementById("previousQueryList");
     pqList.innerHTML = ""
-    
+
     for (let i = 0; i < prevQueryArr.length; i++) {
         const pq = prevQueryArr[i];
         const queryUL =
@@ -335,31 +334,46 @@ const listPreviousQueries = () => {
 };
 
 function recallPrevQuery(e) {
-    pqa = JSON.parse(localStorage.getItem("searchedCities"));
     let i = e.target.getAttribute(id);
-    let [lat, lon] = [pqa[i].lat, pqa[i].lon];
-    const latLonURL = (`api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=${apiKey}&units=imperial`);
-    fetch(latLonURL)
-    .then(res => console.log(res))
-    //more work
-
-    showResult();
+    displayWeather(i);
 };
 
-
-
-
-// display results
-const showResult = (data) => {
-    JSON.parse(data);
-    // call weather API using lat/lon
-}
-
-const displayWeather = () => {
+const displayWeather = (i) => {
+    getWeather(i);
+    // let displayThis = searchArr[i];
     //DISPLAY TODAY
-    todayHeader.innerHTML(`${City}, ${State}, ${Country} `)
+    // todayHeader.innerHTML(`${City}, ${State}, ${Country} `)
 
     //DISPLAY FORECAST
+};
+
+function getWeather(i) {
+    let pqa = JSON.parse(localStorage.getItem("searchedCities"));
+    let [lat, lon] = [pqa[i].lat, pqa[i].lon];
+    const todayWeather = (`https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${apiKey}&units=imperial`);
+    const next5Weather = (`https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${apiKey}&units=imperial`);
+    fetch(todayWeather)
+        .then(res => {
+            console.log(res);
+            return res.json();
+        })
+        .then(data => {
+            console.log(data);
+            let twDisplay = {
+                city: data.name,
+                currentTemp: data.main.temp,
+                feelsLike: data.main.feels_like,
+                humidity: data.main.humidity,
+                highTemp: data.main.temp_max,
+                lowTemp: data.main.temp_min,
+                sunrise: data.sys.sunrise,
+                sunset: data.sys.sunset,
+                longDesc: data.weather[0].description,
+                shortDesc: data.weather[0].main,
+                wind: data.wind.speed
+            };
+            localStorage.setItem("todayForecast", twDisplay);
+        });
 };
 
 searchButton.addEventListener("click", initSearch);
