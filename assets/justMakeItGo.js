@@ -327,20 +327,21 @@ const listPreviousQueries = () => {
         
         const pq = prevQueryArr[i];
         const queryUL =
-            `< a href = "#" class="list-group-item list-group-item-action" id = "pq${[i]}" >
+            `<a href="#" class="list-group-item list-group-item-action" id="${[i]}">
             ${pq.name}, ${pq.state}, ${pq.country}
-            </a > `
+            </a>`
         pqList.innerHTML.prepend(queryUL);
-        document.getElementById(`pq${[i]} `).addEventListener("click", recallPrevQuery);
+        document.getElementById(`pq${[i]}`).addEventListener("click", recallPrevQuery);
     }
 };
 
-function recallPrevQuery() {
-    let i = event.target.getAttribute("id");
-    let searchQuery = searchedCities[i];
-    let [lat, lon] = [searchQuery.lat, searchQuery.lon];
-    const latLonURL = (`api.openweathermap.org / data / 2.5 / forecast ? lat = ${lat}& lon=${lon}& appid=${apiKey}& units=imperial`);
+function recallPrevQuery(e) {
+    pqa = JSON.parse(localStorage.getItem("searchedCities"));
+    let i = e.target.getAttribute(id);
+    let [lat, lon] = [pqa[i].lat, pqa[i].lon];
+    const latLonURL = (`api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=${apiKey}&units=imperial`);
     fetch(latLonURL)
+    .then(res =>)
     //more work
 
     showResult();
