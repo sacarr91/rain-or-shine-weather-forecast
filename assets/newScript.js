@@ -275,9 +275,9 @@ const searchState = document.getElementById('stateInput');
 const searchCountry = document.getElementById('countryDropdown');
 const todayHeader = document.getElementById('currentSearchHeader');
 
-localStorage.getItem("searchedCities") = null
-    ? searchedCities = []
-    : searchedCities = JSON.parse(localStorage.getItem("searchedCities"));
+localStorage.getItem("searchedCities")
+    ? searchedCities = JSON.parse(localStorage.getItem("searchedCities"))
+    : searchedCities = [];
 
 
 // THE BIG SEARCH
@@ -287,53 +287,50 @@ function initSearch() {
     let countryQuery = searchCountry.value;
     const cscURL = (`http://api.openweathermap.org/geo/1.0/direct?q=${cityQuery},${stateQuery},${countryQuery}&limit=1&appid=${apiKey}`);
 
+
+    // >>>>>>>>>>>>>>>>>>>>>>>>>>> THIS IS NOT WORKING 
     fetch(cscURL)
-        .then(parseData)
-        .then(storeData)
-        .then(getWeather1stX)
+        .then(function (response) {
+            let data = response.json();
+ 
+        .then(function (parsedData) {            // store data as variables
+            console.log(parsedData);
+            for (let i = 0; i < parsedData.length; i++) {
+                const searchQuery = {
+                    city: [i].name,
+                    state: searchState.value,
+                    country: [i].country,
+                    lat: parsedData.lat,
+                    lon: parsedData.lon
+                };
+                //put this object at the start of the searched cities array in LS
+                searchedCities.unshift(searchQuery);
+                searchedCities = JSON.stringify(searchedCities);
+                localStorage.setItem("searchedCities", searchedCities);
+                console.log(localStorage);
+                console.log(searchQuery);
+            }
+        });
+
+    // .then(getWeather1stX)
     //display current weather
+
     //display 5-day forecast
 
 }
 
 //FUNCTIONS
-function parseData() {
+
+// generic parse data function
+function parseData(response) {
     let data = JSON.parse(response);
-    return data;
 };
 
-function storeData(data) {
-    // store data as variables
-    const searchQuery = {
-        city: data.name,
-        state: stateQuery,
-        country: data.country,
-        lat: data.lat,
-        lon: data.lon
-    };
-    //put this object at the start of the searched cities array in LS
-    searchedCities.unshift(searchQuery);
-    searchedCities = JSON.stringify(searchedCities);
-    localStorage.setItem("searchedCities", searchedCities);
+// save demographic data for future searches -- DO NOT SAVE WEATHER DATA. Call fresh on each load.
+function storeCscData(data) {
+    // CONSIDER................. i = i++ ??
+
 };
-
-function getWeather1stX(searchQuery) {
-    let [lat, lon] = [searchQuery.lat, searchQuery.lon];
-    const latLonURL = (`api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=${apiKey}`);
-    fetch(latLonURL)
-};
-function getWeatherFromPQ() {
-    let i = event.target.getAttribute("id");
-    let searchQuery = searchedCities[i];
-    let [lat, lon] = [searchQuery.lat, searchQuery.lon];
-    const latLonURL = (`api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=${apiKey}`);
-    fetch(latLonURL)
-    //more work
-
-    showResult();
-};
-
-
 
 // render searched city list
 const listPreviousQueries = () => {
@@ -350,23 +347,44 @@ const listPreviousQueries = () => {
         pqList.innerHTML += queryUL;
         document.getElementById(`pq${[i]}`).addEventListener("click", getWeatherFromPQ);
     }
-}
-// display results
-let showResult = JSON.parse(data);
-// call weather API using lat/lon
+};
 
+function getWeather1stX(searchQuery) {
+    let [lat, lon] = [searchQuery.lat, searchQuery.lon];
+    const latLonURL = (`api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=${apiKey}&units=imperial`);
+    fetch(latLonURL)
+        .then(parseWeatherData)
+        .then(useWeatherData)
+        .then(displayWeather)
+};
+
+
+
+function getWeatherFromPQ() {
+    let i = event.target.getAttribute("id");
+    let searchQuery = searchedCities[i];
+    let [lat, lon] = [searchQuery.lat, searchQuery.lon];
+    const latLonURL = (`api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=${apiKey}&units=imperial`);
+    fetch(latLonURL)
+    //more work
+
+    showResult();
+};
+
+
+
+
+// display results
+const showResult = (data) => {
+    JSON.parse(data);
+    // call weather API using lat/lon
+}
 
 const displayWeather = () => {
-    // <div class="card">
-    //     <img src="..." class="card-img-top" alt="...">
-    //         <div class="card-body">
-    //             <h5 class="card-title">Card title</h5>
-    //             <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional content. This card has even longer content than the first to show that equal height action.</p>
-    //         </div>
-    //         <div class="card-footer">
-    //             <small class="text-body-secondary">Last updated 3 mins ago</small>
-    //         </div>
-    // </div>
+    //DISPLAY TODAY
+    todayHeader.innerHTML(`${City}, ${State}, ${Country}`)
+
+    //DISPLAY FORECAST
 };
 
 searchButton.addEventListener("click", initSearch);
