@@ -273,6 +273,7 @@ const searchButton = document.getElementById('searchBtn');
 const searchCity = document.getElementById('cityInput');
 const searchState = document.getElementById('stateInput');
 const searchCountry = document.getElementById('countryDropdown');
+const todayHeader = document.getElementById('currentSearchHeader');
 
 localStorage.getItem("searchedCities") = null
     ? searchedCities = []
