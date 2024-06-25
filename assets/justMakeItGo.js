@@ -305,11 +305,11 @@ function initSearch() {
             searchedCities = JSON.stringify(searchedCities);
             localStorage.setItem("searchedCities", searchedCities);
         })
-    .then(getWeather1stX)
+        .then(getWeather1stX)
     //display current weather
 
     //display 5-day forecast
-
+listPreviousQueries();
 }
 
 //FUNCTIONS
@@ -320,15 +320,18 @@ const listPreviousQueries = () => {
         ? prevQueryArr = JSON.parse(localStorage.getItem("searchedCities"))
         : prevQueryArr = [];
     console.log(`prevQueryArr = ${prevQueryArr}`);
+    const pqList = document.getElementById("previousQueryList");
+    pqList.innerHTML = ""
+    
     for (let i = 0; i < prevQueryArr.length; i++) {
-        const pqList = document.getElementById("previousQueryList");
+        
         const pq = prevQueryArr[i];
         const queryUL =
             `< a href = "#" class="list-group-item list-group-item-action" id = "pq${[i]}" >
-    ${pq.name}, ${pq.state}, ${pq.country}
-       </a > `
-        pqList.innerHTML += queryUL;
-        document.getElementById(`pq${[i]} `).addEventListener("click", getWeatherFromPQ);
+            ${pq.name}, ${pq.state}, ${pq.country}
+            </a > `
+        pqList.innerHTML.prepend(queryUL);
+        document.getElementById(`pq${[i]} `).addEventListener("click", recallPrevQuery);
     }
 };
 
