@@ -287,10 +287,12 @@ function initSearch() {
 
     fetch(cscURL)
         .then(res => {
+            console.log(`cscURL res:`);
             console.log(res);
             return res.json();
         })
         .then(data => {
+            console.log(`cscURL data:`);
             console.log(data);
             const searchQuery = {
                 city: data.name,
@@ -299,13 +301,14 @@ function initSearch() {
                 lat: data.coord.lat,
                 lon: data.coord.lon
             };
+            console.log(`searchQuery:`);
             console.log(searchQuery);
             //put this object at the start of the searched cities array in LS
             searchedCities.unshift(searchQuery);
             searchedCities = JSON.stringify(searchedCities);
             localStorage.setItem("searchedCities", searchedCities);
         })
-        .then(displayWeather("0"));
+        .then(displayWeather([0]));
     //display current weather
 
     //display 5-day forecast
@@ -349,15 +352,24 @@ const displayWeather = (i) => {
 
 function getWeather(i) {
     let pqa = JSON.parse(localStorage.getItem("searchedCities"));
+    console.log(`pqa:`);
+            console.log(pqa);
     let [lat, lon] = [pqa[i].lat, pqa[i].lon];
+    console.log(`lat lon:`);
+            console.log(lat);
+            console.log(lon);
     const todayWeather = (`https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${apiKey}&units=imperial`);
-    const next5Weather = (`https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${apiKey}&units=imperial`);
+    const next5Weather = (`https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=${apiKey}&units=imperial`);
+    
+    //Current forecast call
     fetch(todayWeather)
         .then(res => {
+            console.log(`todayWeather:`);
             console.log(res);
             return res.json();
         })
         .then(data => {
+            console.log(`todayWeather data:`);
             console.log(data);
             let twDisplay = {
                 city: data.name,
@@ -374,6 +386,32 @@ function getWeather(i) {
             };
             localStorage.setItem("todayForecast", twDisplay);
         });
-};
+
+        // 5-day forecast call
+        fetch(next5Weather)
+        .then(res => {
+            console.log(`next5Weather res:`);
+            console.log(res);
+            return res.json();
+        })
+        .then(data => {
+            console.log(`next5Weather data:`);
+            console.log(data);
+            // let n5Display = {
+            //     city: data.coord.name,
+            //     currentTemp: data.main.temp,
+            //     feelsLike: data.main.feels_like,
+            //     humidity: data.main.humidity,
+            //     highTemp: data.main.temp_max,
+            //     lowTemp: data.main.temp_min,
+            //     sunrise: data.sys.sunrise,
+            //     sunset: data.sys.sunset,
+            //     longDesc: data.weather[0].description,
+            //     shortDesc: data.weather[0].main,
+            //     wind: data.wind.speed
+            // };
+            // localStorage.setItem("next5Forecast", n5Display);
+        });
+    };
 
 searchButton.addEventListener("click", initSearch);
