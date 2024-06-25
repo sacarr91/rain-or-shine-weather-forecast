@@ -305,7 +305,7 @@ function initSearch() {
             searchedCities = JSON.stringify(searchedCities);
             localStorage.setItem("searchedCities", searchedCities);
         })
-        .then(getWeather1stX)
+        // .then(getWeather1stX)
     //display current weather
 
     //display 5-day forecast
@@ -328,9 +328,9 @@ const listPreviousQueries = () => {
         const pq = prevQueryArr[i];
         const queryUL =
             `<a href="#" class="list-group-item list-group-item-action" id="${[i]}">
-            ${pq.name}, ${pq.state}, ${pq.country}
+            ${pq.city}, ${pq.state}, ${pq.country}
             </a>`
-        pqList.innerHTML.prepend(queryUL);
+        pqList.innerHTML += queryUL;
         document.getElementById(`pq${[i]}`).addEventListener("click", recallPrevQuery);
     }
 };
@@ -341,7 +341,7 @@ function recallPrevQuery(e) {
     let [lat, lon] = [pqa[i].lat, pqa[i].lon];
     const latLonURL = (`api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=${apiKey}&units=imperial`);
     fetch(latLonURL)
-    .then(res =>)
+    .then(res => console.log(res))
     //more work
 
     showResult();
