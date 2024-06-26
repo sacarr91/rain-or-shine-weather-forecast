@@ -391,11 +391,11 @@ function weatherForecast(sq) {
         .then(data => {
             console.log(`todayWeather data:`); console.log(data);
             let tw = {
-                date: dayjs().format('M/D/YYYY'),
+                date: dayjs().format('MMM D, YYYY'),
                 city: data.name,
                 currentTemp: Math.round(data.main.temp),
                 feelsLike: Math.round(data.main.feels_like),
-                iconCode: data.weather.icon,
+                iconCode: data.weather[0].icon,
                 shortDesc: data.weather[0].main,
                 longDesc: data.weather[0].description,
                 visibility: data.visibility,
@@ -411,22 +411,22 @@ function weatherForecast(sq) {
             let weatherDisplayHeader = document.getElementById("currentSearchHeader");
             weatherDisplayHeader.innerHTML = `${sq.city}, ${sq.state}, ${sq.country}`;
             let twCard = document.getElementById("twCard");
-            const twContent =`
+            const twContent = `
                 <img src="./assets/images/cover/${tw.iconCode}.png" class="card-img" alt="${tw.longDesc}" id="coverImg">
                 <div class="card-img-overlay col-8">
-                <h4 class="card-title">${tw.currentTemp}</h4>
+                <h2>${tw.date}</h2>
+                <h3 class="card-title">${tw.currentTemp}°</h3>
+                <img src="https://openweathermap.org/img/wn/${tw.iconCode}.png" alt="${tw.longDesc}">
+                <h5>${tw.shortDesc}</h5>
                 <p class="card-text">
-                    Feels like ${tw.feelsLike}</br>
-                    HIGH ${tw.highTemp} / LOW ${tw.lowTemp}
-                </p>
-                <p>Wind Speed: ${tw.wind}</br>
-                    Humidity: ${tw.humidity}
-                </p>
-                <p>Sunrise: ${tw.sunrise}</br>
+                    Feels like ${tw.feelsLike}°</br>
+                    HIGH ${tw.highTemp}° / LOW ${tw.lowTemp}°</br>
+                    Wind Speed: ${tw.wind}</br>
+                    Humidity: ${tw.humidity}</br>
+                    Sunrise: ${tw.sunrise}</br>
                     Sunset: ${tw.sunset}</p>
-                <p class="card-text"><small>${tw.shortDesc}</small></p>
                 </div>`
-            twCard.innerHTML += twContent;
+            twCard.innerHTML = twContent;
         });
 
     // 5-day forecast call
@@ -449,17 +449,18 @@ function weatherForecast(sq) {
             }; // end of filter/[days] creating for loop
 
             let n5Container = document.getElementById("n5Container");
+            n5Container.innerHTML = "";
             for (let i = 0; i < days.length; i++) {
                 const d = days[i];
                 const day = {
                     dayId: (i + 1),
-                    weekday: dayjs(`${d.dt}`).format('dddd'),
-                    date: dayjs(`${d.dt}`).format('M/D/YYYY'),
+                    weekday: dayjs(`${d.dt_txt}`).format('dddd'),
+                    date: dayjs(`${d.dt_txt}`).format('M/D/YYYY'),
                     temp: Math.round(d.main.temp),
                     icon: d.weather[0].icon,
                     shortDesc: d.weather[0].main,
                     longDesc: d.weather[0].description,
-                    rain: `${d.pop}%`,
+                    rain: Math.round(d.pop),
                     humidity: d.main.humidity,
                     wind: d.wind.speed,
                 };
@@ -473,19 +474,16 @@ function weatherForecast(sq) {
                         </div>
                         <div class="card-body">
                             <h5 class="card-title">
-                                ${main.temp}
+                                ${day.temp}°
                             </h5>
                             <img src="https://openweathermap.org/img/wn/${day.icon}@2x.png" class="card-img-top p-1" alt="${day.longDesc}">
                             <p class="card-text">
-                                ${day.temp}
+                                ${day.rain}%</br>chance of rain
                             </p>
                             <p>
                                 Wind Speed: ${day.wind}</br>
                                 Humidity: ${day.humidity}
                             </p>
-                        </div>
-                        <div class="card-footer">
-                            <small class="text-body-secondary">${day.shortDesc}</small>
                         </div>
                     </div>`
                 n5Container.innerHTML += n5Card;

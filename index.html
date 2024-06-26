@@ -26,7 +26,7 @@
           </div>
           <div class="col-7">
             <select class="form-select" aria-label="country" id="countryDropdown">
-              <option selected disabled>Select Country</option>
+              <option selected disabled value="US">Select Country</option>
               <!-- inject HTML -->
             </select>
           </div>
@@ -38,16 +38,16 @@
       </div>
     </div>
     <div id="forecastCtn" class="container-fluid col-sm-8 col-md-9">
-      <h2 id="currentSearchHeader">${City.Name}, State, Country</h2>
+      <h2 id="currentSearchHeader"></h2>
       <!-- TODAY'S WEATHER -->
       <h3 class="mt-3">Today's Weather</h3>
-      <div class="card text-bg-dark" id="twCard">
-        
+      <div class="card text-bg-dark" id="twCard" style="min-height: fit-content; font-size: large;">
+        <i>Search for a city to load the weather forecast.</i>
       </div>
       <!-- 5 DAY FORECAST -->
       <h3 class="mt-3">5-Day Forecast</h3>
       <div class="card-group text-center" id="n5Container">
-       
+      
 
 
       </div>
