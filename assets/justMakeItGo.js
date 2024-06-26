@@ -485,6 +485,9 @@ function weatherForecast(sq) {
                                 Humidity: ${day.humidity}
                             </p>
                         </div>
+                        <div class="card-footer">
+                            <h5 class="text-body-secondary">${day.shortDesc}</h5>
+                        </div>
                     </div>`
                 n5Container.innerHTML += n5Card;
             }; // end of [days]/{day} & forecast creation for loop
