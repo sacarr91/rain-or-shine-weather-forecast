@@ -261,6 +261,7 @@ const countryCodesArr = [
 //grab HTML elements
 const searchContainerEl = document.getElementById('searchCtn');
 const forecastContainerEl = document.getElementById('forecastCtn');
+const searchForm = document.getElementById('searchForm');
 const searchButton = document.getElementById('searchBtn');
 const searchCity = document.getElementById('cityInput');
 const searchState = document.getElementById('stateInput');
@@ -269,37 +270,39 @@ const todayHeader = document.getElementById('currentSearchHeader');
 
 let cityQuery, stateQuery, countryQuery;
 
+// DONE: preload country options to load the correct country code in order to permit worldwide search functionality
 function createCountryDropdown() {
     const countryDropdown = document.getElementById("countryDropdown");
     for (let i = 0; i < countryCodesArr.length; i++) {
-      const thisCountry = countryCodesArr[i].name;
-      const thisCode = countryCodesArr[i].code;
-      let countryName = `<option value="${thisCode}">${thisCountry}</option>`;
-      countryDropdown.innerHTML += countryName;
+        const thisCountry = countryCodesArr[i].name;
+        const thisCode = countryCodesArr[i].code;
+        let countryName = `<option value="${thisCode}">${thisCountry}</option>`;
+        countryDropdown.innerHTML += countryName;
     };
-  };
+};
 
-// THE BIG SEARCH
+// DONE: search by form input, fetch location demographics
 async function initSearch() {
     console.log("inside initSearch function");
 
     cityQuery = searchCity.value;
-    stateQuery = searchState.value;
+    stateQuery = searchState.value.toUpperCase();
     countryQuery = searchCountry.value;
     const cscURL = (`https://api.openweathermap.org/data/2.5/weather?q=${cityQuery},${stateQuery},${countryQuery}&appid=${apiKey}&units=imperial`);
 
     try {
         let res = await fetch(cscURL);
-        console.log(res);
+        console.log("cscURL res:"); console.log(res);
         let data = await res.json();
         constructObject(data);
     } catch (error) {
         console.log(error);
     }
-}
+} // to ConstructObject(data)
 
-async function constructObject(data) {
-    console.log(data);
+// DONE: create query object, store query, add to searched array, store new array, refresh searched cities list, reset form
+function constructObject(data) {
+    console.log("constructObject... data:"); console.log(data);
     let searchQuery = {
         city: data.name,
         state: searchState.value,
@@ -307,8 +310,12 @@ async function constructObject(data) {
         lat: data.coord.lat,
         lon: data.coord.lon
     };
-    console.log(`searchQuery:`);
-    console.log(searchQuery);
+    console.log(`searchQuery:`); console.log(searchQuery);
+    //store as current search for display function retrieval
+    searchQueryString = JSON.stringify(searchQuery);
+    localStorage.setItem("searchQuery", searchQueryString);
+    console.log(`searchQuery in LocalStorage:`); console.log(JSON.parse(localStorage.getItem("searchQuery")));
+
     //put this object at the start of the searched cities array in LS
     localStorage.getItem("searchedCities")
         ? searchedCities = JSON.parse(localStorage.getItem("searchedCities"))
@@ -316,26 +323,14 @@ async function constructObject(data) {
     searchedCities.unshift(searchQuery);
     searchedCities = JSON.stringify(searchedCities);
     localStorage.setItem("searchedCities", searchedCities);
-    console.log("end of constructObject function");
-} /////////////////////////////////////////////////////////////////////////////////////////////////works to here 6.25.24 10:20pm
 
-async function showWeather() {
-    searchQuery = await constructObject();
-    localStorage.setItem("searchQuery", searchQuery);
-}
-//display current weather
+    console.log("end of constructObject functionality");
+    searchForm.reset();
+    listPreviousQueries();
+    getWeather(searchQuery.lat, searchQuery.lon);
+} // to GetWeather(searchquery.lat, searchQuery.lon)
 
-//display 5-day forecast
-
-
-
-
-
-//FUNCTIONS
-
-// render searched city list
-
-
+// DONE: reset list container, render searched city list, display city/state/country, refresh with array update, link array index as id, 
 const listPreviousQueries = () => {
     console.log("inside listPrevQueries function");
     localStorage.getItem("searchedCities")
@@ -348,53 +343,66 @@ const listPreviousQueries = () => {
         console.log(`inside for loop #${i}`);
         const pq = prevQueryArr[i];
         const queryUL =
-            `<a href="#" class="list-group-item list-group-item-action" id="${i}">
+            `<a href="#" class="list-group-item list-group-item-action prevQuery" id="${i}">
             ${pq.city}, ${pq.state}, ${pq.country}
             </a>`
         pqList.innerHTML += queryUL;
-        document.getElementById(`${i}`).addEventListener("click", recallPrevQuery);
+    };
+    // add event listeners
+    let prevQueries = document.querySelectorAll(".prevQuery");
+    for (let i = 0; i < prevQueries.length; i++) {
+        console.log(`assigning event listener for list item  ${i}`);
+        const listItem = prevQueries[i];
+        listItem.addEventListener("click", () => {
+            console.log(`item ${i} has been clicked`);
+            recallPrevQuery(i)
+        });
     }
-};
+}; // to RecallPrevQuery(i) -- on click
 
-function recallPrevQuery(e) {
+// DONE: get ID of item clicked, pull item from stored searchedCities array, get lat & lon, call displayWeather(lat, lon)
+function recallPrevQuery(i) {
     console.log("inside recallPrevQuery function");
-    const i = e.target.getAttribute(id).value;
+    console.log(`i:`); console.log(i);
     const pqa = JSON.parse(localStorage.getItem("searchedCities"));
     const sq = pqa[i];
-    displayWeather(sq.lat, sq.lon);
-};
+    console.log("sq = pqa[i]:"); console.log(sq);
+    displayWeather(sq);
+}; // to DisplayWeather(sq)
 
-const displayWeather = (lat, lon) => {
+const displayWeather = (sq) => {
     console.log("inside displayWeather function");
+    console.log("sq:"); console.log(sq);
+    let [lat, lon] = [sq.lat, sq.lon];
+    console.log('lat:'); console.log(lat);
+    console.log('lon:'); console.log(lon);
+
     getWeather(lat, lon);
+    console.log("return to displayWeather function");
     // let displayThis = searchArr[i];
     //DISPLAY TODAY
     // todayHeader.innerHTML(`${City}, ${State}, ${Country} `)
 
     //DISPLAY FORECAST
-};
+}; // includes GetWeather(lat, lon), DisplayToday(), DisplayForecast()
 
 function getWeather(lat, lon) {
+    //may come from initSearch origin OR recallPrevQuery
     console.log("inside getWeather function");
     console.log(lat);
     console.log(lon);
 
-    let pqa = JSON.parse(localStorage.getItem("searchedCities"));
-    console.log(`pqa:`);
-    console.log(pqa);
     const todayWeather = (`https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${apiKey}&units=imperial`);
     const next5Weather = (`https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=${apiKey}&units=imperial`);
 
     //Current forecast call
     fetch(todayWeather)
         .then(res => {
-            console.log(`todayWeather:`);
-            console.log(res);
+            console.log(`todayWeather:`); console.log(res);
             return res.json();
         })
         .then(data => {
-            console.log(`todayWeather data:`);
-            console.log(data);
+            console.log(`todayWeather data:`); console.log(data);
             let twDisplay = {
                 city: data.name,
                 currentTemp: data.main.temp,
@@ -408,26 +416,28 @@ function getWeather(lat, lon) {
                 shortDesc: data.weather[0].main,
                 wind: data.wind.speed
             };
-            localStorage.setItem("todayForecast", twDisplay);
-            console.log("twDisplay:");
-            console.log(twDisplay);
-            console.log("todayForecast local storage:");
-            console.log(localStorage.getItem("twDisplay"));
-           
+            console.log("twDisplay:"); console.log(twDisplay);
+            let twDisplayString = JSON.stringify(twDisplay);
+            localStorage.setItem("todayForecast", twDisplayString);
+            console.log("confirming todayForecast in local storage:"); console.log(JSON.parse(localStorage.getItem("twDisplay")));
+
         });
 
     // 5-day forecast call
     fetch(next5Weather)
         .then(res => {
-            console.log(`next5Weather res:`);
-            console.log(res);
+            console.log(`next5Weather res:`); console.log(res);
             return res.json();
         })
         .then(data => {
-            console.log(`next5Weather data:`);
-            console.log(data);
+            console.log(`next5Weather data:`); console.log(data);
             let n5Display = {
-                city: data.coord.name,
+                city: data.city.name,
+                // day1:
+                // day2:
+                // day3:
+                // day4:
+                // day5:
                 currentTemp: data.main.temp,
                 feelsLike: data.main.feels_like,
                 humidity: data.main.humidity,
@@ -439,11 +449,10 @@ function getWeather(lat, lon) {
                 shortDesc: data.weather[0].main,
                 wind: data.wind.speed
             };
-            localStorage.setItem("next5Forecast", n5Display);
-            console.log("n5Display:");
-            console.log(n5Display);
-            console.log("next5Forecast local storage:");
-            console.log(localStorage.getItem("next5Forecast"));
+            console.log("n5Display:"); console.log(n5Display);
+            let n5DisplayString = JSON.stringify(n5Display);
+            localStorage.setItem("next5Forecast", n5DisplayString);
+            console.log("confirming next5Forecast in local storage:"); console.log(JSON.parse(localStorage.getItem("next5Forecast")));
         });
 };
 
