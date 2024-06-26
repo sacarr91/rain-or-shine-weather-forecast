@@ -256,15 +256,7 @@ const countryCodesArr = [
     { name: "Zimbabwe", code: "ZW" }
 ];
 
-function createCountryDropdown() {
-    const countryDropdown = document.getElementById("countryDropdown");
-    for (let i = 0; i < countryCodesArr.length; i++) {
-        const thisCountry = countryCodesArr[i].name;
-        const thisCode = countryCodesArr[i].code;
-        let countryName = `<option value="${thisCode}">${thisCountry}</option>`;
-        countryDropdown.innerHTML += countryName;
-    };
-};
+
 
 //grab HTML elements
 const searchContainerEl = document.getElementById('searchCtn');
@@ -275,50 +267,77 @@ const searchState = document.getElementById('stateInput');
 const searchCountry = document.getElementById('countryDropdown');
 const todayHeader = document.getElementById('currentSearchHeader');
 
+let cityQuery, stateQuery, countryQuery;
+
+function createCountryDropdown() {
+    const countryDropdown = document.getElementById("countryDropdown");
+    for (let i = 0; i < countryCodesArr.length; i++) {
+      const thisCountry = countryCodesArr[i].name;
+      const thisCode = countryCodesArr[i].code;
+      let countryName = `<option value="${thisCode}">${thisCountry}</option>`;
+      countryDropdown.innerHTML += countryName;
+    };
+  };
+
 // THE BIG SEARCH
-function initSearch() {
+async function initSearch() {
+    console.log("inside initSearch function");
+
+    cityQuery = searchCity.value;
+    stateQuery = searchState.value;
+    countryQuery = searchCountry.value;
+    const cscURL = (`https://api.openweathermap.org/data/2.5/weather?q=${cityQuery},${stateQuery},${countryQuery}&appid=${apiKey}&units=imperial`);
+
+    try {
+        let res = await fetch(cscURL);
+        console.log(res);
+        let data = await res.json();
+        constructObject(data);
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+async function constructObject(data) {
+    console.log(data);
+    let searchQuery = {
+        city: data.name,
+        state: searchState.value,
+        country: countryQuery,
+        lat: data.coord.lat,
+        lon: data.coord.lon
+    };
+    console.log(`searchQuery:`);
+    console.log(searchQuery);
+    //put this object at the start of the searched cities array in LS
     localStorage.getItem("searchedCities")
         ? searchedCities = JSON.parse(localStorage.getItem("searchedCities"))
         : searchedCities = [];
-    let cityQuery = searchCity.value;
-    let stateQuery = searchState.value;
-    let countryQuery = searchCountry.value;
-    const cscURL = (`https://api.openweathermap.org/data/2.5/weather?q=${cityQuery},${stateQuery},${countryQuery}&appid=${apiKey}&units=imperial`);
+    searchedCities.unshift(searchQuery);
+    searchedCities = JSON.stringify(searchedCities);
+    localStorage.setItem("searchedCities", searchedCities);
+    console.log("end of constructObject function");
+} /////////////////////////////////////////////////////////////////////////////////////////////////works to here 6.25.24 10:20pm
 
-    fetch(cscURL)
-        .then(res => {
-            console.log(`cscURL res:`);
-            console.log(res);
-            return res.json();
-        })
-        .then(data => {
-            console.log(`cscURL data:`);
-            console.log(data);
-            const searchQuery = {
-                city: data.name,
-                state: searchState.value,
-                country: countryQuery,
-                lat: data.coord.lat,
-                lon: data.coord.lon
-            };
-            console.log(`searchQuery:`);
-            console.log(searchQuery);
-            //put this object at the start of the searched cities array in LS
-            searchedCities.unshift(searchQuery);
-            searchedCities = JSON.stringify(searchedCities);
-            localStorage.setItem("searchedCities", searchedCities);
-        })
-        .then(displayWeather([0]));
-    //display current weather
-
-    //display 5-day forecast
-    listPreviousQueries();
+async function showWeather() {
+    searchQuery = await constructObject();
+    localStorage.setItem("searchQuery", searchQuery);
 }
+//display current weather
+
+//display 5-day forecast
+
+
+
+
 
 //FUNCTIONS
 
 // render searched city list
+
+
 const listPreviousQueries = () => {
+    console.log("inside listPrevQueries function");
     localStorage.getItem("searchedCities")
         ? prevQueryArr = JSON.parse(localStorage.getItem("searchedCities"))
         : prevQueryArr = [];
@@ -326,6 +345,7 @@ const listPreviousQueries = () => {
     pqList.innerHTML = ""
 
     for (let i = 0; i < prevQueryArr.length; i++) {
+        console.log(`inside for loop #${i}`);
         const pq = prevQueryArr[i];
         const queryUL =
             `<a href="#" class="list-group-item list-group-item-action" id="${i}">
@@ -337,12 +357,16 @@ const listPreviousQueries = () => {
 };
 
 function recallPrevQuery(e) {
-    let i = e.target.getAttribute(id);
-    displayWeather(i);
+    console.log("inside recallPrevQuery function");
+    const i = e.target.getAttribute(id).value;
+    const pqa = JSON.parse(localStorage.getItem("searchedCities"));
+    const sq = pqa[i];
+    displayWeather(sq.lat, sq.lon);
 };
 
-const displayWeather = (i) => {
-    getWeather(i);
+const displayWeather = (lat, lon) => {
+    console.log("inside displayWeather function");
+    getWeather(lat, lon);
     // let displayThis = searchArr[i];
     //DISPLAY TODAY
     // todayHeader.innerHTML(`${City}, ${State}, ${Country} `)
@@ -350,17 +374,17 @@ const displayWeather = (i) => {
     //DISPLAY FORECAST
 };
 
-function getWeather(i) {
+function getWeather(lat, lon) {
+    console.log("inside getWeather function");
+    console.log(lat);
+    console.log(lon);
+
     let pqa = JSON.parse(localStorage.getItem("searchedCities"));
     console.log(`pqa:`);
-            console.log(pqa);
-    let [lat, lon] = [pqa[i].lat, pqa[i].lon];
-    console.log(`lat lon:`);
-            console.log(lat);
-            console.log(lon);
+    console.log(pqa);
     const todayWeather = (`https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${apiKey}&units=imperial`);
     const next5Weather = (`https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=${apiKey}&units=imperial`);
-    
+
     //Current forecast call
     fetch(todayWeather)
         .then(res => {
@@ -385,10 +409,15 @@ function getWeather(i) {
                 wind: data.wind.speed
             };
             localStorage.setItem("todayForecast", twDisplay);
+            console.log("twDisplay:");
+            console.log(twDisplay);
+            console.log("todayForecast local storage:");
+            console.log(localStorage.getItem("twDisplay"));
+           
         });
 
-        // 5-day forecast call
-        fetch(next5Weather)
+    // 5-day forecast call
+    fetch(next5Weather)
         .then(res => {
             console.log(`next5Weather res:`);
             console.log(res);
@@ -397,21 +426,27 @@ function getWeather(i) {
         .then(data => {
             console.log(`next5Weather data:`);
             console.log(data);
-            // let n5Display = {
-            //     city: data.coord.name,
-            //     currentTemp: data.main.temp,
-            //     feelsLike: data.main.feels_like,
-            //     humidity: data.main.humidity,
-            //     highTemp: data.main.temp_max,
-            //     lowTemp: data.main.temp_min,
-            //     sunrise: data.sys.sunrise,
-            //     sunset: data.sys.sunset,
-            //     longDesc: data.weather[0].description,
-            //     shortDesc: data.weather[0].main,
-            //     wind: data.wind.speed
-            // };
-            // localStorage.setItem("next5Forecast", n5Display);
+            let n5Display = {
+                city: data.coord.name,
+                currentTemp: data.main.temp,
+                feelsLike: data.main.feels_like,
+                humidity: data.main.humidity,
+                highTemp: data.main.temp_max,
+                lowTemp: data.main.temp_min,
+                sunrise: data.sys.sunrise,
+                sunset: data.sys.sunset,
+                longDesc: data.weather[0].description,
+                shortDesc: data.weather[0].main,
+                wind: data.wind.speed
+            };
+            localStorage.setItem("next5Forecast", n5Display);
+            console.log("n5Display:");
+            console.log(n5Display);
+            console.log("next5Forecast local storage:");
+            console.log(localStorage.getItem("next5Forecast"));
         });
-    };
+};
 
 searchButton.addEventListener("click", initSearch);
+listPreviousQueries();
+createCountryDropdown();
