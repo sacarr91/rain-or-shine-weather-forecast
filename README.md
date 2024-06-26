@@ -1,5 +1,7 @@
 # Rain or Shine? Weather Forecast
 
+[Link to Deployed Weather App](https://sacarr91.github.io/rain-or-shine-weather-forecast/)
+
 ## Description
 Want to know if it's a good day to take the boat out? Go golfing? Head to the park? Stay inside?
 
@@ -7,19 +9,7 @@ This weather app will allow users to search for weather conditions in any city.
 When a city is selected, the current conditions will display alongside the 5-day forecast. 
 Searched cities will store in local storage for easy reaccess by the user as desired.
 
-### Note:
-This application is still under development. 
-
-#### Available features currently include
-- [x] A blank page! How cool!
-
-#### Added functionality
-- Integrated Bing Maps API for flexible search capability, not reliant on spelling accuracy
-- 
-
-![screenshot of deployed page]()
-
-[Link to Deployed Weather App](https://sacarr91.github.io/rain-or-shine-weather-forecast/)
+![screenshot of deployed page](./assets/images/cover/Screenshot%202024-06-26%20191127.png)
 
 ## User Story
 
@@ -36,15 +26,15 @@ SO THAT I can plan a trip accordingly
 * GIVEN a weather dashboard 
 > - [x] with form inputs...
 * WHEN I search for a city
-> - [ ] THEN I am presented with current and future conditions for that city and that city is added to the search history
+> - [x] THEN I am presented with current and future conditions for that city and that city is added to the search history
 * WHEN I view current weather conditions for that city
 > THEN I am presented with 
-> - [ ] the city name, 
-> - [ ] the date, 
-> - [ ] an icon representation of weather conditions, 
-> - [ ] the temperature, 
-> - [ ] the wind speed, 
-> - [ ] and the humidity 
+> - [x] the city name, 
+> - [x] the date, 
+> - [x] an icon representation of weather conditions, 
+> - [x] the temperature, 
+> - [x] the wind speed, 
+> - [x] and the humidity 
 >> **Current-day forecast responses:**
 >>- name
 >>- dt ... CONVERT USING DAY.JS
@@ -63,11 +53,11 @@ SO THAT I can plan a trip accordingly
 
 * WHEN I view future weather conditions for that city
 > THEN I am presented with a **5-day forecast** that displays...
->- [ ] the date, 
->- [ ] an icon representation of weather conditions, 
->- [ ] the temperature, 
->- [ ] the wind speed, 
->- [ ] and the humidity
+>- [x] the date, 
+>- [x] an icon representation of weather conditions, 
+>- [x] the temperature, 
+>- [x] the wind speed, 
+>- [x] and the humidity
 >> **5-day forecast responses:**
 >>- city.name
 >>- list.dt_txt .... CONVERT USING DAY.JS
@@ -83,4 +73,4 @@ SO THAT I can plan a trip accordingly
 >>+ *city.sunrise*
 >>+ *city.sunset*
 * WHEN I click on a city in the search history
-> - [ ] THEN I am again presented with current and future conditions for that city
+> - [x] THEN I am again presented with current and future conditions for that city

@@ -412,7 +412,7 @@ function weatherForecast(sq) {
             weatherDisplayHeader.innerHTML = `${sq.city}, ${sq.state}, ${sq.country}`;
             let twCard = document.getElementById("twCard");
             const twContent = `
-                <img src="./assets/images/cover/${tw.iconCode}.png" class="card-img" alt="${tw.longDesc}" id="coverImg">
+                <img src="./assets/images/cover/${tw.iconCode}.png" class="card-img" alt="${tw.longDesc}" id="coverImg" style="max-height: 375px; object-fit: cover;">
                 <div class="card-img-overlay col-8">
                 <h2>${tw.date}</h2>
                 <h3 class="card-title">${tw.currentTemp}°</h3>
@@ -473,9 +473,9 @@ function weatherForecast(sq) {
                             ${day.date}
                         </div>
                         <div class="card-body">
-                            <h5 class="card-title">
+                            <h3 class="card-title">
                                 ${day.temp}°
-                            </h5>
+                            </h3>
                             <img src="https://openweathermap.org/img/wn/${day.icon}@2x.png" class="card-img-top p-1" alt="${day.longDesc}">
                             <p class="card-text">
                                 ${day.rain}%</br>chance of rain
