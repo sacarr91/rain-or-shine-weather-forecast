@@ -460,14 +460,14 @@ function getWeather(lat, lon) {
                 }
                 let n5Display = {
                     city: data.city.name,
-                    
-                    }
-                };
-                console.log("n5Display:"); console.log(n5Display);
-                let n5DisplayString = JSON.stringify(n5Display);
-                localStorage.setItem("next5Forecast", n5DisplayString);
-                console.log("confirming next5Forecast in local storage:"); console.log(JSON.parse(localStorage.getItem("next5Forecast")));
-            });
+//finish
+                }
+            };
+            console.log("n5Display:"); console.log(n5Display);
+            let n5DisplayString = JSON.stringify(n5Display);
+            localStorage.setItem("next5Forecast", n5DisplayString);
+            console.log("confirming next5Forecast in local storage:"); console.log(JSON.parse(localStorage.getItem("next5Forecast")));
+        });
 };
 
 // render image for cover on current weather
@@ -485,8 +485,8 @@ const coverDisplay = (dwi) => {
 };
 
 const filterN5Results = (arr, query) => {
-    days = 
-}
+    days = ""
+} // fix
 
 searchButton.addEventListener("click", initSearch);
 listPreviousQueries();
