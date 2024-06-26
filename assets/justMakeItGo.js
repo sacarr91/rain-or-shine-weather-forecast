@@ -464,54 +464,17 @@ function getWeather(lat, lon) {
 };
 
 const coverDisplay = () => {
-    let lwi = list.weather.icon;
-    if (lwi.includes("d")) {
-        if (lwi.includes("01")) {
-            //clear sky
-        } else if (lwi.includes("02")) {
-            //few clouds
-        } else if (lwi.includes("03")) {
-            // scattered clouds
-        } else if (lwi.includes("04")) {
-            // broken clouds
-        } else if (lwi.includes("09")) {
-            // shower rain
-        } else if (lwi.includes("10")) {
-            // rain
-        } else if (lwi.includes("11")) {
-            // thunderstorm
-        } else if (lwi.includes("13")) {
-            // snow
-        } else if (lwi.includes("50")) {
-            // mist
-        } else {
-            // generic day weather
-        };
-    } else if (lwi.includes("n")) {
-        if (lwi.includes("01")) {
-            //clear sky
-        } else if (lwi.includes("02")) {
-            //few clouds
-        } else if (lwi.includes("03")) {
-            // scattered clouds
-        } else if (lwi.includes("04")) {
-            // broken clouds
-        } else if (lwi.includes("09")) {
-            // shower rain
-        } else if (lwi.includes("10")) {
-            // rain
-        } else if (lwi.includes("11")) {
-            // thunderstorm
-        } else if (lwi.includes("13")) {
-            // snow
-        } else if (lwi.includes("50")) {
-            // mist
-        } else {
-            // generic night weather
-        };
+    let imgSrc = document.getElementById("coverImg");
+    const availImgs = ["01d", "01n", "02d", "02n", "03d", "03n", "04d", "04n", "09d", "09n", "10d", "10n", "11d", "11n", "13d", "13n", "50d", "50n"];
+    const lwi = list.weather.icon;
+    let img;
+    if (availImgs.includes(lwi)) {
+        img = lwi;
     } else {
-        // generic weather
+        img = `generic image`;
     };
+    let pathToImg = `./assets/images/cover/${img}.png`;
+    imgSrc.setAttribute("src", `${pathToImg}`);
 };
 
 searchButton.addEventListener("click", initSearch);
