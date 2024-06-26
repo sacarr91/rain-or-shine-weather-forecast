@@ -1,6 +1,6 @@
 # Rain or Shine? Weather Forecast
 
-[Link to Deployed Weather App](https://sacarr91.github.io/rain-or-shine-weather-forecast/)
+[Link to "Rain or Shine?" Weather Dashboard](https://sacarr91.github.io/rain-or-shine-weather-forecast/)
 
 ## Description
 Want to know if it's a good day to take the boat out? Go golfing? Head to the park? Stay inside?
