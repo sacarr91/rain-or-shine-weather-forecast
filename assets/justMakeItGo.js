@@ -382,7 +382,7 @@ const displayWeather = (sq) => {
     // let displayThis = searchArr[i];
     //DISPLAY TODAY
     // todayHeader.innerHTML(`${City}, ${State}, ${Country} `)
-
+    let icon = `<img src="https://openweathermap.org/img/wn/${code}@2x.png" alt="${weather.description}">`
     //DISPLAY FORECAST
 }; // includes GetWeather(lat, lon), DisplayToday(), DisplayForecast()
 
@@ -433,27 +433,85 @@ function getWeather(lat, lon) {
             console.log(`next5Weather data:`); console.log(data);
             let n5Display = {
                 city: data.city.name,
-                // day1:
-                // day2:
-                // day3:
-                // day4:
-                // day5:
-                currentTemp: data.main.temp,
-                feelsLike: data.main.feels_like,
-                humidity: data.main.humidity,
-                highTemp: data.main.temp_max,
-                lowTemp: data.main.temp_min,
-                sunrise: data.sys.sunrise,
-                sunset: data.sys.sunset,
-                longDesc: data.weather[0].description,
-                shortDesc: data.weather[0].main,
-                wind: data.wind.speed
+                day1: {
+                    shortDesc: data.weather[0].main,
+                    longDesc: data.weather[0].description,
+                    highTemp: data.main.temp_max,
+                    lowTemp: data.main.temp_min,
+                    humidity: data.main.humidity,
+                    wind: data.wind.speed
+                    sunrise: data.sys.sunrise,
+                    sunset: data.sys.sunset,
+                },
+                day2: {
+
+                },
+                day3: {
+
+                },
+                day4: {
+
+                },
+                day5: {
+
+                }
             };
             console.log("n5Display:"); console.log(n5Display);
             let n5DisplayString = JSON.stringify(n5Display);
             localStorage.setItem("next5Forecast", n5DisplayString);
             console.log("confirming next5Forecast in local storage:"); console.log(JSON.parse(localStorage.getItem("next5Forecast")));
         });
+};
+
+const coverDisplay = () => {
+    let lwi = list.weather.icon;
+    if (lwi.includes("d")) {
+        if (lwi.includes("01")) {
+            //clear sky
+        } else if (lwi.includes("02")) {
+            //few clouds
+        } else if (lwi.includes("03")) {
+            // scattered clouds
+        } else if (lwi.includes("04")) {
+            // broken clouds
+        } else if (lwi.includes("09")) {
+            // shower rain
+        } else if (lwi.includes("10")) {
+            // rain
+        } else if (lwi.includes("11")) {
+            // thunderstorm
+        } else if (lwi.includes("13")) {
+            // snow
+        } else if (lwi.includes("50")) {
+            // mist
+        } else {
+            // generic day weather
+        };
+    } else if (lwi.includes("n")) {
+        if (lwi.includes("01")) {
+            //clear sky
+        } else if (lwi.includes("02")) {
+            //few clouds
+        } else if (lwi.includes("03")) {
+            // scattered clouds
+        } else if (lwi.includes("04")) {
+            // broken clouds
+        } else if (lwi.includes("09")) {
+            // shower rain
+        } else if (lwi.includes("10")) {
+            // rain
+        } else if (lwi.includes("11")) {
+            // thunderstorm
+        } else if (lwi.includes("13")) {
+            // snow
+        } else if (lwi.includes("50")) {
+            // mist
+        } else {
+            // generic night weather
+        };
+    } else {
+        // generic weather
+    };
 };
 
 searchButton.addEventListener("click", initSearch);
