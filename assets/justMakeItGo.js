@@ -406,18 +406,20 @@ function getWeather(lat, lon) {
         .then(data => {
             console.log(`todayWeather data:`); console.log(data);
             let twDisplay = {
+                date: dayjs().format('M/D/YYYY'),
                 city: data.name,
-                currentTemp: data.main.temp,
-                feelsLike: data.main.feels_like,
-                humidity: data.main.humidity,
-                highTemp: data.main.temp_max,
-                lowTemp: data.main.temp_min,
-                sunrise: data.sys.sunrise,
-                sunset: data.sys.sunset,
-                longDesc: data.weather[0].description,
+                currentTemp: Math.round(data.main.temp),
+                feelsLike: Math.round(data.main.feels_like),
+                iconCode: data.weather.icon,
                 shortDesc: data.weather[0].main,
+                longDesc: data.weather[0].description,
+                visibility: data.visibility,
+                humidity: data.main.humidity,
                 wind: data.wind.speed,
-                iconCode: data.weather.icon
+                highTemp: Math.round(data.main.temp_max),
+                lowTemp: Math.round(data.main.temp_min),
+                sunrise: data.sys.sunrise,
+                sunset: data.sys.sunset
             };
             console.log("twDisplay:"); console.log(twDisplay);
             let twDisplayString = JSON.stringify(twDisplay);
@@ -433,36 +435,39 @@ function getWeather(lat, lon) {
         })
         .then(data => {
             console.log(`next5Weather data:`); console.log(data);
-            let n5Display = {
-                city: data.city.name,
-                day1: {
-                    shortDesc: data.weather[0].main,
-                    longDesc: data.weather[0].description,
-                    highTemp: data.main.temp_max,
-                    lowTemp: data.main.temp_min,
-                    humidity: data.main.humidity,
-                    wind: data.wind.speed,
-                    sunrise: data.sys.sunrise,
-                    sunset: data.sys.sunset,
-                },
-                day2: {
-
-                },
-                day3: {
-
-                },
-                day4: {
-
-                },
-                day5: {
-
-                }
+            let days = [];
+            //filter data 
+            for (let i = 0; i < data.list.length; i++) {
+                if (data.list[i].dt_txt.includes("12:00:00")) {
+                    days = [...days, data.list[i]];
+                    console.log(`data.list[${i}] added to days array... new list:`); console.log(days);
+                } else {
+                    console.log(`data.list[${i}] not added.`);
+                };
             };
-            console.log("n5Display:"); console.log(n5Display);
-            let n5DisplayString = JSON.stringify(n5Display);
-            localStorage.setItem("next5Forecast", n5DisplayString);
-            console.log("confirming next5Forecast in local storage:"); console.log(JSON.parse(localStorage.getItem("next5Forecast")));
-        });
+            for (let i = 0; i < days.length; i++) {
+                const d = days[i];
+                const day = {
+                    dayId: (i + 1),
+                    date: dayjs().format(d.dt, 'M/D/YYYY'),
+                    temp: Math.round(d.main.temp),
+                    icon: d.weather[0].icon,
+                    shortDesc: d.weather[0].main,
+                    longDesc: d.weather[0].description,
+                    rain: `${d.pop}%`,
+                    humidity: d.main.humidity,
+                    wind: d.wind.speed,
+                }
+                let n5Display = {
+                    city: data.city.name,
+                    
+                    }
+                };
+                console.log("n5Display:"); console.log(n5Display);
+                let n5DisplayString = JSON.stringify(n5Display);
+                localStorage.setItem("next5Forecast", n5DisplayString);
+                console.log("confirming next5Forecast in local storage:"); console.log(JSON.parse(localStorage.getItem("next5Forecast")));
+            });
 };
 
 // render image for cover on current weather
@@ -478,6 +483,10 @@ const coverDisplay = (dwi) => {
     let pathToImg = `./assets/images/cover/${img}.png`;
     imgSrc.setAttribute("src", `${pathToImg}`);
 };
+
+const filterN5Results = (arr, query) => {
+    days = 
+}
 
 searchButton.addEventListener("click", initSearch);
 listPreviousQueries();
