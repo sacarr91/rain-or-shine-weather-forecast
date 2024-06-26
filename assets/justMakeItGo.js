@@ -286,7 +286,7 @@ async function initSearch() {
     console.log("inside initSearch function");
 
     cityQuery = searchCity.value;
-    stateQuery = searchState.value.toUpperCase();
+    stateQuery = searchState.value;
     countryQuery = searchCountry.value;
     const cscURL = (`https://api.openweathermap.org/data/2.5/weather?q=${cityQuery},${stateQuery},${countryQuery}&appid=${apiKey}&units=imperial`);
 
@@ -305,7 +305,7 @@ function constructObject(data) {
     console.log("constructObject... data:"); console.log(data);
     let searchQuery = {
         city: data.name,
-        state: searchState.value,
+        state: searchState.value.toUpperCase(),
         country: countryQuery,
         lat: data.coord.lat,
         lon: data.coord.lon
@@ -327,8 +327,8 @@ function constructObject(data) {
     console.log("end of constructObject functionality");
     searchForm.reset();
     listPreviousQueries();
-    getWeather(searchQuery.lat, searchQuery.lon);
-} // to GetWeather(searchquery.lat, searchQuery.lon)
+    weatherForecast(searchQuery);
+} // to weatherForecast(searchquery)
 
 // DONE: reset list container, render searched city list, display city/state/country, refresh with array update, link array index as id, 
 const listPreviousQueries = () => {
@@ -367,32 +367,17 @@ function recallPrevQuery(i) {
     const pqa = JSON.parse(localStorage.getItem("searchedCities"));
     const sq = pqa[i];
     console.log("sq = pqa[i]:"); console.log(sq);
-    displayWeather(sq);
-}; // to DisplayWeather(sq)
+    weatherForecast(sq);
+}; // to weatherForecast(sq)
 
-const displayWeather = (sq) => {
-    console.log("inside displayWeather function");
+// THE ULTIMATE DISPLAY WEATHER FUNCTION -- both new & recalled searches lead here
+function weatherForecast(sq) {
+    //may come from initSearch origin OR recallPrevQuery
+    console.log("inside weatherForecast function");
     console.log("sq:"); console.log(sq);
     let [lat, lon] = [sq.lat, sq.lon];
     console.log('lat:'); console.log(lat);
     console.log('lon:'); console.log(lon);
-
-    getWeather(lat, lon);
-    console.log("return to displayWeather function");
-    // let displayThis = searchArr[i];
-    // DISPLAY TODAY
-    todayHeader.innerHTML(`${City}, ${State}, ${Country} `)
-    //set cover image
-    coverDisplay(twDisplay.iconCode);
-    let icon = `<img src="https://openweathermap.org/img/wn/${code}@2x.png" alt="${weather.description}">`
-    //DISPLAY FORECAST
-}; // includes GetWeather(lat, lon), DisplayToday(), DisplayForecast()
-
-function getWeather(lat, lon) {
-    //may come from initSearch origin OR recallPrevQuery
-    console.log("inside getWeather function");
-    console.log(lat);
-    console.log(lon);
 
     const todayWeather = (`https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${apiKey}&units=imperial`);
     const next5Weather = (`https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=${apiKey}&units=imperial`);
@@ -405,7 +390,7 @@ function getWeather(lat, lon) {
         })
         .then(data => {
             console.log(`todayWeather data:`); console.log(data);
-            let twDisplay = {
+            let tw = {
                 date: dayjs().format('M/D/YYYY'),
                 city: data.name,
                 currentTemp: Math.round(data.main.temp),
@@ -418,13 +403,30 @@ function getWeather(lat, lon) {
                 wind: data.wind.speed,
                 highTemp: Math.round(data.main.temp_max),
                 lowTemp: Math.round(data.main.temp_min),
-                sunrise: data.sys.sunrise,
-                sunset: data.sys.sunset
+                sunrise: dayjs(data.sys.sunrise).format("h:mm a"),
+                sunset: dayjs(data.sys.sunset).format("h:mm a")
             };
-            console.log("twDisplay:"); console.log(twDisplay);
-            let twDisplayString = JSON.stringify(twDisplay);
-            localStorage.setItem("todayForecast", twDisplayString);
-            console.log("confirming todayForecast in local storage:"); console.log(JSON.parse(localStorage.getItem("twDisplay")));
+            console.log("todaysWeather:"); console.log(tw);
+            //create tw html here
+            let weatherDisplayHeader = document.getElementById("currentSearchHeader");
+            weatherDisplayHeader.innerHTML = `${sq.city}, ${sq.state}, ${sq.country}`;
+            let twCard = document.getElementById("twCard");
+            const twContent =`
+                <img src="./assets/images/cover/${tw.iconCode}.png" class="card-img" alt="${tw.longDesc}" id="coverImg">
+                <div class="card-img-overlay col-8">
+                <h4 class="card-title">${tw.currentTemp}</h4>
+                <p class="card-text">
+                    Feels like ${tw.feelsLike}</br>
+                    HIGH ${tw.highTemp} / LOW ${tw.lowTemp}
+                </p>
+                <p>Wind Speed: ${tw.wind}</br>
+                    Humidity: ${tw.humidity}
+                </p>
+                <p>Sunrise: ${tw.sunrise}</br>
+                    Sunset: ${tw.sunset}</p>
+                <p class="card-text"><small>${tw.shortDesc}</small></p>
+                </div>`
+            twCard.innerHTML += twContent;
         });
 
     // 5-day forecast call
@@ -444,12 +446,15 @@ function getWeather(lat, lon) {
                 } else {
                     console.log(`data.list[${i}] not added.`);
                 };
-            };
+            }; // end of filter/[days] creating for loop
+
+            let n5Container = document.getElementById("n5Container");
             for (let i = 0; i < days.length; i++) {
                 const d = days[i];
                 const day = {
                     dayId: (i + 1),
-                    date: dayjs().format(d.dt, 'M/D/YYYY'),
+                    weekday: dayjs(`${d.dt}`).format('dddd'),
+                    date: dayjs(`${d.dt}`).format('M/D/YYYY'),
                     temp: Math.round(d.main.temp),
                     icon: d.weather[0].icon,
                     shortDesc: d.weather[0].main,
@@ -457,36 +462,51 @@ function getWeather(lat, lon) {
                     rain: `${d.pop}%`,
                     humidity: d.main.humidity,
                     wind: d.wind.speed,
-                }
-                let n5Display = {
-                    city: data.city.name,
-//finish
-                }
-            };
-            console.log("n5Display:"); console.log(n5Display);
-            let n5DisplayString = JSON.stringify(n5Display);
-            localStorage.setItem("next5Forecast", n5DisplayString);
-            console.log("confirming next5Forecast in local storage:"); console.log(JSON.parse(localStorage.getItem("next5Forecast")));
+                };
+                console.log(`"day" object created:`); console.log(day);
+                //create n5 html here
+                const n5Card =
+                    `<div class="card justify-content-center">
+                        <div class="card-header"><b>
+                            ${day.weekday}</b></br>
+                            ${day.date}
+                        </div>
+                        <div class="card-body">
+                            <h5 class="card-title">
+                                ${main.temp}
+                            </h5>
+                            <img src="https://openweathermap.org/img/wn/${day.icon}@2x.png" class="card-img-top p-1" alt="${day.longDesc}">
+                            <p class="card-text">
+                                ${day.temp}
+                            </p>
+                            <p>
+                                Wind Speed: ${day.wind}</br>
+                                Humidity: ${day.humidity}
+                            </p>
+                        </div>
+                        <div class="card-footer">
+                            <small class="text-body-secondary">${day.shortDesc}</small>
+                        </div>
+                    </div>`
+                n5Container.innerHTML += n5Card;
+            }; // end of [days]/{day} & forecast creation for loop
         });
+
 };
 
-// render image for cover on current weather
-const coverDisplay = (dwi) => {
-    let imgSrc = document.getElementById("coverImg");
-    const availImgs = ["01d", "01n", "02d", "02n", "03d", "03n", "04d", "04n", "09d", "09n", "10d", "10n", "11d", "11n", "13d", "13n", "50d", "50n"];
-    let img;
-    if (availImgs.includes(dwi)) {
-        img = dwi;
-    } else {
-        img = `generic image`;
-    };
-    let pathToImg = `./assets/images/cover/${img}.png`;
-    imgSrc.setAttribute("src", `${pathToImg}`);
-};
-
-const filterN5Results = (arr, query) => {
-    days = ""
-} // fix
+// NOT NEEDED: function render image for cover on current weather
+// const coverDisplay = (dwi) => {
+//     let imgSrc = document.getElementById("coverImg");
+//     const availImgs = ["01d", "01n", "02d", "02n", "03d", "03n", "04d", "04n", "09d", "09n", "10d", "10n", "11d", "11n", "13d", "13n", "50d", "50n"];
+//     let img;
+//     if (availImgs.includes(dwi)) {
+//         img = dwi;
+//     } else {
+//         img = `generic image`;
+//     };
+//     let pathToImg = `./assets/images/cover/${img}.png`;
+//     imgSrc.setAttribute("src", `${pathToImg}`);
+// };
 
 searchButton.addEventListener("click", initSearch);
 listPreviousQueries();
