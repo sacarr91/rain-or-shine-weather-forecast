@@ -9,7 +9,7 @@ This weather app will allow users to search for weather conditions in any city.
 When a city is selected, the current conditions will display alongside the 5-day forecast. 
 Searched cities will store in local storage for easy reaccess by the user as desired.
 
-![screenshot of deployed page](./assets/images/cover/Screenshot%202024-06-26%20191127.png)
+![screenshot of deployed page](./assets/images/Screenshot%202024-06-26%20191127.png)
 
 ## User Story
 
