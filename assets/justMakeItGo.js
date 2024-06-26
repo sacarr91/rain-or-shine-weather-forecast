@@ -380,8 +380,10 @@ const displayWeather = (sq) => {
     getWeather(lat, lon);
     console.log("return to displayWeather function");
     // let displayThis = searchArr[i];
-    //DISPLAY TODAY
-    // todayHeader.innerHTML(`${City}, ${State}, ${Country} `)
+    // DISPLAY TODAY
+    todayHeader.innerHTML(`${City}, ${State}, ${Country} `)
+    //set cover image
+    coverDisplay(twDisplay.iconCode);
     let icon = `<img src="https://openweathermap.org/img/wn/${code}@2x.png" alt="${weather.description}">`
     //DISPLAY FORECAST
 }; // includes GetWeather(lat, lon), DisplayToday(), DisplayForecast()
@@ -414,13 +416,13 @@ function getWeather(lat, lon) {
                 sunset: data.sys.sunset,
                 longDesc: data.weather[0].description,
                 shortDesc: data.weather[0].main,
-                wind: data.wind.speed
+                wind: data.wind.speed,
+                iconCode: data.weather.icon
             };
             console.log("twDisplay:"); console.log(twDisplay);
             let twDisplayString = JSON.stringify(twDisplay);
             localStorage.setItem("todayForecast", twDisplayString);
             console.log("confirming todayForecast in local storage:"); console.log(JSON.parse(localStorage.getItem("twDisplay")));
-
         });
 
     // 5-day forecast call
@@ -439,7 +441,7 @@ function getWeather(lat, lon) {
                     highTemp: data.main.temp_max,
                     lowTemp: data.main.temp_min,
                     humidity: data.main.humidity,
-                    wind: data.wind.speed
+                    wind: data.wind.speed,
                     sunrise: data.sys.sunrise,
                     sunset: data.sys.sunset,
                 },
@@ -463,13 +465,13 @@ function getWeather(lat, lon) {
         });
 };
 
-const coverDisplay = () => {
+// render image for cover on current weather
+const coverDisplay = (dwi) => {
     let imgSrc = document.getElementById("coverImg");
     const availImgs = ["01d", "01n", "02d", "02n", "03d", "03n", "04d", "04n", "09d", "09n", "10d", "10n", "11d", "11n", "13d", "13n", "50d", "50n"];
-    const lwi = list.weather.icon;
     let img;
-    if (availImgs.includes(lwi)) {
-        img = lwi;
+    if (availImgs.includes(dwi)) {
+        img = dwi;
     } else {
         img = `generic image`;
     };
